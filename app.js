@@ -1,22 +1,23 @@
 const servers = {
   minecraft: [
-  {
-    name: "NadzAura Minecraft Server",
-    address: "nadzaura.aternos.me",
-    port: 35842,
-    type: "java"
-  }
+    {
+      name: "NadzAura Server",
+      address: "nadzaura.aternos.me",
+      port: 35842,
+      type: "java", 
+    }
+  ],
+  other: [
+    {
+      name: "Custom Game Server",
+      address: "example.com",
+      port: 12345,
+      type: "custom" // placeholder for future support
+    }
+  ]
+};
 
-  // Example Bedrock server
-  // {
-  //   name: "Bedrock Server",
-  //   address: "example.com",
-  //   port: 19132,
-  //   type: "bedrock"
-  // }
-  ]};
-
- const container = document.getElementById("servers");
+const container = document.getElementById("servers");
 const categorySelect = document.getElementById("categorySelect");
 
 // Render servers for a selected category
