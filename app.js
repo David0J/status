@@ -1,4 +1,5 @@
-const servers = [
+const servers = {
+  minecraft: [
   {
     name: "NadzAura Minecraft Server",
     address: "nadzaura.aternos.me",
@@ -13,7 +14,7 @@ const servers = [
   //   port: 19132,
   //   type: "bedrock"
   // }
-];
+  ]};
 
  const container = document.getElementById("servers");
 const categorySelect = document.getElementById("categorySelect");
