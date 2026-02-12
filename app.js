@@ -15,7 +15,7 @@ const servers = [
   // }
 ];
 
-const container = document.getElementById("servers");
+ const container = document.getElementById("servers");
 
 servers.forEach(server => {
   const card = document.createElement("div");
@@ -25,14 +25,13 @@ servers.forEach(server => {
     <div>
       <div class="server-name">${server.name}</div>
       <div class="server-info">
-        ${server.address}:${server.port} • ${server.type.toUpperCase()}
+        ${server.address}:${server.port}
       </div>
     </div>
     <div class="status">Checking...</div>
   `;
 
   container.appendChild(card);
-
   const statusEl = card.querySelector(".status");
 
   const apiUrl =
@@ -43,7 +42,18 @@ servers.forEach(server => {
   fetch(apiUrl)
     .then(res => res.json())
     .then(data => {
-      if (data.online) {
+      const motdText = (data.motd?.clean || []).join(" ").toLowerCase();
+      const versionText = (data.version || "").toLowerCase();
+
+      const notPlayable =
+        !data.online ||
+        motdText.includes("offline") ||
+        versionText.includes("offline");
+
+      if (notPlayable) {
+        statusEl.textContent = "OFFLINE";
+        statusEl.classList.add("offline");
+      } else {
         const players =
           data.players && typeof data.players.online === "number"
             ? ` (${data.players.online}/${data.players.max})`
@@ -51,13 +61,10 @@ servers.forEach(server => {
 
         statusEl.textContent = `ONLINE${players}`;
         statusEl.classList.add("online");
-      } else {
-        statusEl.textContent = "OFFLINE";
-        statusEl.classList.add("offline");
       }
     })
     .catch(() => {
-      statusEl.textContent = "ERROR";
+      statusEl.textContent = "OFFLINE";
       statusEl.classList.add("offline");
     });
 });
