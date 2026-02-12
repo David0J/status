@@ -1,0 +1,85 @@
+:root {
+  --bg: #0f1115;
+  --card: #161a20;
+  --online: #3bd671;
+  --offline: #ff4d4d;
+  --text: #e6e6e6;
+  --muted: #9aa0a6;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 1px solid #222;
+}
+
+header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: var(--muted);
+}
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: grid;
+  gap: 20px;
+}
+
+.server {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.server-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.server-info {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.status {
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.online {
+  background: rgba(59, 214, 113, 0.15);
+  color: var(--online);
+}
+
+.offline {
+  background: rgba(255, 77, 77, 0.15);
+  color: var(--offline);
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--muted);
+  font-size: 13px;
+}
