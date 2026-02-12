@@ -31,6 +31,17 @@ header h1 {
 
 header p {
   color: var(--muted);
+  margin-bottom: 20px;
+}
+
+select#categorySelect {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
 }
 
 main {
