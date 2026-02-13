@@ -4,7 +4,7 @@ const servers = {
       name: "NadzAura Server",
       address: "nadzaura.aternos.me",
       port: 35842,
-      type: "java", 
+      type: "java",
     }
   ],
   other: [
@@ -12,7 +12,7 @@ const servers = {
       name: "Custom Game Server",
       address: "example.com",
       port: 12345,
-      type: "custom" // placeholder for future support
+      type: "custom"
     }
   ]
 };
@@ -20,9 +20,56 @@ const servers = {
 const container = document.getElementById("servers");
 const categorySelect = document.getElementById("categorySelect");
 
-// Render servers for a selected category
+async function checkMinecraftServer(server, statusEl) {
+  const apiUrl =
+    server.type === "bedrock"
+      ? `https://api.mcsrvstat.us/bedrock/2/${server.address}:${server.port}?_=${Date.now()}`
+      : `https://api.mcsrvstat.us/2/${server.address}:${server.port}?_=${Date.now()}`;
+
+  statusEl.textContent = "Checking...";
+  statusEl.className = "status";
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 7000);
+
+    const res = await fetch(apiUrl, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    const data = await res.json();
+
+    // REAL ONLINE
+    if (data.online === true) {
+      const players =
+        data.players && typeof data.players.online === "number"
+          ? ` (${data.players.online}/${data.players.max})`
+          : "";
+
+      statusEl.textContent = `ONLINE${players}`;
+      statusEl.classList.add("online");
+      return;
+    }
+
+    // Aternos ping blocked but not hard error
+    if (!data.debug || !data.debug.error) {
+      statusEl.textContent = "UNKNOWN (Ping Blocked)";
+      statusEl.style.color = "#facc15";
+      return;
+    }
+
+    // Real offline
+    statusEl.textContent = "OFFLINE";
+    statusEl.classList.add("offline");
+
+  } catch (err) {
+    // Timeout / blocked / fetch failure
+    statusEl.textContent = "UNKNOWN (Connection Blocked)";
+    statusEl.style.color = "#facc15";
+  }
+}
+
 function renderCategory(category) {
-  container.innerHTML = ""; // clear previous servers
+  container.innerHTML = "";
 
   servers[category].forEach(server => {
     const card = document.createElement("div");
@@ -35,46 +82,14 @@ function renderCategory(category) {
       </div>
       <div class="status">Checking...</div>
     `;
+
     container.appendChild(card);
 
     const statusEl = card.querySelector(".status");
 
-    // Only ping if Minecraft server
     if (server.type === "java" || server.type === "bedrock") {
-      const apiUrl =
-        server.type === "bedrock"
-          ? `https://api.mcsrvstat.us/bedrock/2/${server.address}:${server.port}`
-          : `https://api.mcsrvstat.us/2/${server.address}:${server.port}`;
-
-      fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-          const motdText = (data.motd?.clean || []).join(" ").toLowerCase();
-          const versionText = (data.version || "").toLowerCase();
-
-          const notPlayable =
-            !data.online ||
-            motdText.includes("offline") ||
-            versionText.includes("offline");
-
-          if (notPlayable) {
-            statusEl.textContent = "OFFLINE";
-            statusEl.classList.add("offline");
-          } else {
-            const players =
-              data.players && typeof data.players.online === "number"
-                ? ` (${data.players.online}/${data.players.max})`
-                : "";
-            statusEl.textContent = `ONLINE${players}`;
-            statusEl.classList.add("online");
-          }
-        })
-        .catch(() => {
-          statusEl.textContent = "OFFLINE";
-          statusEl.classList.add("offline");
-        });
+      checkMinecraftServer(server, statusEl);
     } else {
-      // Placeholder for non-Minecraft servers
       statusEl.textContent = "Not supported yet";
       statusEl.classList.add("offline");
     }
@@ -84,7 +99,7 @@ function renderCategory(category) {
 // Initial load
 renderCategory(categorySelect.value);
 
-// Handle category selection
+// Change category
 categorySelect.addEventListener("change", () => {
   renderCategory(categorySelect.value);
 });
