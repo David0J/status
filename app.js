@@ -98,7 +98,6 @@ function renderCategory(category) {
 
 // Initial load
 renderCategory(categorySelect.value);
-
 // Change category
 categorySelect.addEventListener("change", () => {
   renderCategory(categorySelect.value);
